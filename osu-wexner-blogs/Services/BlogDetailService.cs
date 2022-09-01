@@ -15,8 +15,15 @@ namespace osu_wexner_blogs.Services
             if(Get(blogDetail.UUID) != null || blogDetail.UUID == null)
                 blogDetail.UUID = Guid.NewGuid().ToString();
 
-            BlogDetails.Add(blogDetail);
-            ReloadData();
+            try
+            {
+                BlogDetails.Add(blogDetail);
+                ReloadData();
+            }
+            catch (Exception e)
+            {
+                blogDetail.UUID = e.Message;
+            }
 
             return blogDetail.UUID;
         }
@@ -33,29 +40,44 @@ namespace osu_wexner_blogs.Services
             return BlogDetails;
         }
 
-        public static List<BlogDetail> GetByTitle(string title)
+        public static List<BlogDetail> GetByTopic(string topic)
         {
-            return BlogDetails.FindAll(bd => bd.Title == title);
+            return BlogDetails.FindAll(bd => bd.Topic == topic);
         }
         #endregion
 
         #region Update
-        public static void Update(BlogDetail blogDetail)
+        public static bool Update(BlogDetail blogDetail)
         {
-            int index = BlogDetails.FindIndex(bd => bd.UUID == blogDetail.UUID);
-            BlogDetails[index] = blogDetail;
-            ReloadData();
+            try
+            {
+                int index = BlogDetails.FindIndex(bd => bd.UUID == blogDetail.UUID);
+                BlogDetails[index] = blogDetail;
+                ReloadData();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
         }
         #endregion
 
         #region Delete
-        public static void Delete(BlogDetail blogDetail)
+        public static bool Delete(BlogDetail blogDetail)
         {
             BlogDetail itemToRemove = Get(blogDetail.UUID);
-            
-            if(itemToRemove != null)
+
+            if (itemToRemove != null)
+            {
                 BlogDetails.Remove(itemToRemove);
-            ReloadData();
+                ReloadData();
+                return true;
+            }
+            else
+                return false;
+
         }
         #endregion
 

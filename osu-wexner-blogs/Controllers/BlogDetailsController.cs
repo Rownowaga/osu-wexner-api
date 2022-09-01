@@ -15,23 +15,38 @@ namespace osu_wexner_blogs.Controllers
             return BlogDetailService.GetAll();
         }
 
-        [HttpGet("{title}")]
-        public ActionResult<List<BlogDetail>> GetByTitle(string title)
+        [HttpGet("{topic}")]
+        public ActionResult<List<BlogDetail>> GetByTitle(string topic)
         { 
-            return BlogDetailService.GetByTitle(title);
+            return BlogDetailService.GetByTopic(topic);
         }
 
         [HttpPost()]
         public IActionResult Create(BlogDetail blogDetail)
         {
-            return Ok(BlogDetailService.Add(blogDetail));
+            string pkey = BlogDetailService.Add(blogDetail);
+            if (pkey != null && pkey.Length > 4)
+                return Ok(pkey);
+            else
+                return BadRequest();
         }
 
         [HttpPut()]
         public IActionResult Update(BlogDetail blogDetail)
         {
-            BlogDetailService.Update(blogDetail);
-            return Ok();
+            if(BlogDetailService.Update(blogDetail))
+                return Ok();
+            else
+                return NotFound();
+        }
+
+        [HttpDelete()]
+        public IActionResult Delete(BlogDetail blogDetail)
+        {
+            if (BlogDetailService.Delete(blogDetail))
+                return Ok();
+            else 
+                return BadRequest();
         }
     }
 }
