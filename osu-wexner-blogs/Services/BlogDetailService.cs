@@ -6,7 +6,7 @@ namespace osu_wexner_blogs.Services
 {
     public class BlogDetailService
     {
-        static string Database = "../Database/BlogDetails.csv";
+        static string Database = "../osu-wexner-blogs/Database/BlogDetails.csv";
         static List<BlogDetail> BlogDetails { get; } = LoadData();
 
         #region Create
@@ -15,6 +15,9 @@ namespace osu_wexner_blogs.Services
             if(Get(blogDetail.UUID) != null || blogDetail.UUID == null)
                 blogDetail.UUID = Guid.NewGuid().ToString();
 
+            Random rng = new Random();
+            blogDetail.ReadTime = rng.Next(1, 100);
+            blogDetail.Clicks = rng.Next(1, 10000);
             try
             {
                 BlogDetails.Add(blogDetail);
